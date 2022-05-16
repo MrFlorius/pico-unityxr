@@ -93,7 +93,7 @@ MonoBehaviour:
   power3: {fileID: 21300000, guid: 06234cbf1d671ff4c9c30d7b804b6338, type: 3}
   power4: {fileID: 21300000, guid: 9317f3ff0e609654081ccff6a7871138, type: 3}
   power5: {fileID: 21300000, guid: 958df6ecf70142f419cfb4044afc936c, type: 3}
-  hand: 0
+  hand: 1
 --- !u!223 &8336406418849002160
 Canvas:
   m_ObjectHideFlags: 0

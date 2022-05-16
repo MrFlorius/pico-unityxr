@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -13,11 +9,11 @@ namespace Unity.XR.PXR
 {
     public class PXR_ObjImporter : MonoBehaviour
     {
-        private static PXR_ObjImporter _instance;
+        private static PXR_ObjImporter instance;
 
         public static PXR_ObjImporter Instance
         {
-            get { return _instance ?? (_instance = new PXR_ObjImporter()); }
+            get { return instance ?? (instance = new PXR_ObjImporter()); }
         }
 
         private List<int> triangles;
@@ -58,12 +54,10 @@ namespace Unity.XR.PXR
             }
 
             Mesh mesh = new Mesh();
-
             mesh.vertices = newVerts;
             mesh.uv = newUVs;
             mesh.normals = newNormals;
             mesh.triangles = triangles.ToArray();
-
             mesh.RecalculateBounds();
 
             return mesh;
@@ -214,7 +208,6 @@ namespace Unity.XR.PXR
 
         private int IntParseFast(StringBuilder value)
         {
-
             int result = 0;
             for (int i = 0; i < value.Length; i++)
             {

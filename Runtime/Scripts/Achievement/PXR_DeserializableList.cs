@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Unity.XR.PXR
@@ -19,13 +19,13 @@ namespace Unity.XR.PXR
         public bool Remove(T item) { return data.Remove(item); }
         public void RemoveAt(int index) { data.RemoveAt(index); }
 
-        private IEnumerator GetEnumerator1()
+        private IEnumerator GetEnumeratorNext()
         {
             return GetEnumerator();
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator1();
+            return GetEnumeratorNext();
         }
 
         protected List<T> data;

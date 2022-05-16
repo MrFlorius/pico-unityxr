@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,9 +9,7 @@ namespace Unity.XR.PXR
     {
         private Text fpsText;
 
-        private float updateInterval = 0.5f;
-        private float accum = 0.0f;
-        private int frames = 0;
+        private float updateInterval = 1.0f;
         private float timeLeft = 0.0f;
         private string strFps = null;
 
@@ -35,19 +29,15 @@ namespace Unity.XR.PXR
         private void ShowFps()
         {
             timeLeft -= Time.unscaledDeltaTime;
-            accum += Time.unscaledDeltaTime;
-            ++frames;
 
             if (timeLeft <= 0.0)
             {
-                float fps = frames / accum;
-
+                float fps = PXR_Plugin.System.UPxr_GetConfigInt(ConfigType.RenderFPS);
+                
                 strFps = string.Format("FPS: {0:f0}", fps);
                 fpsText.text = strFps;
 
                 timeLeft += updateInterval;
-                accum = 0.0f;
-                frames = 0;
             }
         }
     }

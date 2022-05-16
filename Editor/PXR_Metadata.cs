@@ -1,8 +1,4 @@
-/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 #if XR_MGMT_GTE_320
 
@@ -20,9 +16,9 @@ namespace Unity.XR.PXR.Editor
             public string packageName => "PicoXR Plugin";
             public string packageId => "com.unity.xr.picoxr";
             public string settingsType => "Unity.XR.PXR.PXR_Settings";
-            public List<IXRLoaderMetadata> loaderMetadata => s_LoaderMetadata;
+            public List<IXRLoaderMetadata> loaderMetadata => lLoaderMetadata;
 
-            private static readonly List<IXRLoaderMetadata> s_LoaderMetadata = new List<IXRLoaderMetadata>() { new PXR_LoaderMetadata() };
+            private static readonly List<IXRLoaderMetadata> lLoaderMetadata = new List<IXRLoaderMetadata>() { new PXR_LoaderMetadata() };
         }
 
         private class PXR_LoaderMetadata : IXRLoaderMetadata
@@ -33,6 +29,7 @@ namespace Unity.XR.PXR.Editor
 
             private static readonly List<BuildTargetGroup> SupportedBuildTargets = new List<BuildTargetGroup>()
             {
+                BuildTargetGroup.Standalone,
                 BuildTargetGroup.Android
             };
         }
@@ -46,8 +43,6 @@ namespace Unity.XR.PXR.Editor
             if (settings != null)
             {
                 settings.stereoRenderingModeAndroid = PXR_Settings.StereoRenderingModeAndroid.MultiPass;
-                settings.useDefaultRenderTexture = true;
-                settings.eyeRenderTextureResolution = new Vector2(2048, 2048);
 
                 return true;
             }

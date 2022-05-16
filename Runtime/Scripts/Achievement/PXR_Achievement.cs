@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Unity.XR.PXR
 {
@@ -10,142 +10,160 @@ namespace Unity.XR.PXR
             return IsPlatformInitialized;
         }
 
-        public static void Initialize()
-        {
-        }
-
         public static void RegisterNetwork()
         {
-            PXR_AchievementAPI.RegisterNetwork();
+            PXR_AchievementAPI.UPxr_RegisterNetwork();
         }
 
         public static void UnRegisterNetwork()
         {
-            PXR_AchievementAPI.UnRegisterNetwork();
+            PXR_AchievementAPI.UPxr_UnRegisterNetwork();
         }
-
-        // If LogMessages is true, then the contents of each request response
-        // will be printed using Debug.Log. This allocates a lot of heap memory,
-        // and so should not be called outside of testing and debugging.
+        
         public static bool LogMessages = false;
 
     }
 
     public static partial class PXR_Achievement
     {
+        /// <summary>
+        /// Achievement system initialization.
+        /// </summary>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementUpdate> Init()
         {
 
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.Init());
+                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.UPxr_AchievementInit());
             }
             return null;
         }
-        /*Add 'count' to the achievement with the given name. This must be a COUNT
-         achievement. The largest number that is supported by this method is the max
-        value of a signed 64-bit integer. If the number is larger than that, it is
-        clamped to that max value before being passed to the servers.
-        */
+
+        /// <summary>
+        ///  Add count achievements.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementUpdate> AddCount(string name, long count)
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.pvr_Achievements_AddCount(name, count));
+                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.UPxr_AchievementsAddCount(name, count));
             }
 
             return null;
         }
 
-        /// Unlock fields of a BITFIELD achievement.
-        /// \param name The name of the achievement to unlock
-        /// \param fields A string containing either '0' or '1' characters. Every '1' will unlock the field in the corresponding position.
-        ///
+        /// <summary>
+        /// Add bitfield achievements.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementUpdate> AddFields(string name, string fields)
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.pvr_Achievements_AddFields(name, fields));
+                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.UPxr_AchievementsAddFields(name, fields));
             }
 
             return null;
         }
 
-        /// Request all achievement definitions for the app.
-        ///
+        /// <summary>
+        /// Get all definitions of achievements.
+        /// </summary>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementDefinitionList> GetAllDefinitions()
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementDefinitionList>(PXR_AchievementAPI.pvr_Achievements_GetAllDefinitions());
+                return new PXR_Request<PXR_AchievementDefinitionList>(PXR_AchievementAPI.UPxr_AchievementsGetAllDefinitions());
             }
 
             return null;
         }
 
-        /// Request the progress for the user on all achievements in the app.
-        ///
+        /// <summary>
+        /// Get progress of all modified achievements.
+        /// </summary>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementProgressList> GetAllProgress()
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementProgressList>(PXR_AchievementAPI.pvr_Achievements_GetAllProgress());
+                return new PXR_Request<PXR_AchievementProgressList>(PXR_AchievementAPI.UPxr_AchievementsGetAllProgress());
             }
 
             return null;
         }
 
-        /// Request the achievement definitions that match the specified names.
-        ///
+        /// <summary>
+        /// Get definitions by name.
+        /// </summary>
+        /// <param name="names"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementDefinitionList> GetDefinitionsByName(string[] names)
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementDefinitionList>(PXR_AchievementAPI.pvr_Achievements_GetDefinitionsByName(names, (names != null ? names.Length : 0)));
+                return new PXR_Request<PXR_AchievementDefinitionList>(PXR_AchievementAPI.UPxr_AchievementsGetDefinitionsByName(names, (names != null ? names.Length : 0)));
             }
 
             return null;
         }
 
-        /// Request the user's progress on the specified achievements.
-        ///
+        /// <summary>
+        /// Get achievement progress by name.
+        /// </summary>
+        /// <param name="names"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementProgressList> GetProgressByName(string[] names)
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementProgressList>(PXR_AchievementAPI.pvr_Achievements_GetProgressByName(names, (names != null ? names.Length : 0)));
+                return new PXR_Request<PXR_AchievementProgressList>(PXR_AchievementAPI.UPxr_AchievementsGetProgressByName(names, (names != null ? names.Length : 0)));
             }
 
             return null;
         }
 
-        /// Unlock the achievement with the given name. This can be of any achievement
-        /// type.
-        ///
+        /// <summary>
+        /// Unlock achievement according to apiname.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementUpdate> Unlock(string name)
         {
             if (PXR_AchievementCore.IsInitialized())
             {
-                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.pvr_Achievements_Unlock(name));
+                return new PXR_Request<PXR_AchievementUpdate>(PXR_AchievementAPI.UPxr_AchievementsUnlock(name));
             }
 
             return null;
         }
 
+        /// <summary>
+        /// When getting all the achievement definitions, if there are multiple pages, get the next page.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementDefinitionList> GetNextAchievementDefinitionListPage(PXR_AchievementDefinitionList list)
         {
             if (!list.HasNextPage)
             {
-                Debug.LogWarning("Platform.GetNextAchievementDefinitionListPage: List has no next page");
+                Debug.LogWarning("PXRLog Platform.GetNextAchievementDefinitionListPage: List has no next page");
                 return null;
             }
 
             if (PXR_AchievementCore.IsInitialized())
             {
                 return new PXR_Request<PXR_AchievementDefinitionList>(
-                  PXR_AchievementAPI.pvr_HTTP_GetWithMessageType(
+                  PXR_AchievementAPI.UPxr_GetWithMessageType(
                     list.NextUrl,
-                    PXR_Message.MessageType.Achievements_GetNextAchievementDefinitionArrayPage
+                    PXR_Message.MessageType.AchievementsGetNextAchievementDefinitionArrayPage
                   )
                 );
             }
@@ -153,20 +171,25 @@ namespace Unity.XR.PXR
             return null;
         }
 
+        /// <summary>
+        /// When getting all modified achievement progress information, if there are multiple pages, get the next page.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static PXR_Request<PXR_AchievementProgressList> GetNextAchievementProgressListPage(PXR_AchievementProgressList list)
         {
             if (!list.HasNextPage)
             {
-                Debug.LogWarning("Platform.GetNextAchievementProgressListPage: List has no next page");
+                Debug.LogWarning("PXRLog Platform.GetNextAchievementProgressListPage: List has no next page");
                 return null;
             }
 
             if (PXR_AchievementCore.IsInitialized())
             {
                 return new PXR_Request<PXR_AchievementProgressList>(
-                  PXR_AchievementAPI.pvr_HTTP_GetWithMessageType(
+                  PXR_AchievementAPI.UPxr_GetWithMessageType(
                     list.NextUrl,
-                    PXR_Message.MessageType.Achievements_GetNextAchievementProgressArrayPage
+                    PXR_Message.MessageType.AchievementsGetNextAchievementProgressArrayPage
                   )
                 );
             }

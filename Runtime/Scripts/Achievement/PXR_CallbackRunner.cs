@@ -1,5 +1,4 @@
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Unity.XR.PXR
 {
@@ -13,7 +12,7 @@ namespace Unity.XR.PXR
       var existingCallbackRunner = FindObjectOfType<PXR_CallbackRunner>();
       if (existingCallbackRunner != this)
       {
-        Debug.LogWarning("You only need one instance of CallbackRunner");
+        Debug.LogWarning("PXRLog You only need one instance of CallbackRunner");
       }
       if (IsPersistantBetweenSceneLoads)
       {

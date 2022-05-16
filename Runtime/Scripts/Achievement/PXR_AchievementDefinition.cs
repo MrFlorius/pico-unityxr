@@ -1,34 +1,33 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unity.XR.PXR
 {
     public class PXR_AchievementDefinition
     {
-        public readonly AchievementType Type;
-        public readonly string Name;
-        public readonly int BitfieldLength;
-        public readonly long Target;
-        public readonly string Title;
-        public readonly string Description;
-        public readonly string UnlockedDescription;
-        public readonly string UnlockedIcon;
-        public readonly string LockedIcon;
-        public readonly bool IsSecrect;
-
+        public readonly AchievementType type;
+        public readonly string name;
+        public readonly int bitfieldLength;
+        public readonly long target;
+        public readonly string title;
+        public readonly string description;
+        public readonly string unlockedDescription;
+        public readonly string unlockedIcon;
+        public readonly string lockedIcon;
+        public readonly bool isSecrect;
 
         public PXR_AchievementDefinition(AndroidJavaObject msg)
         {
-            Type = PXR_AchievementAPI.pvr_AchievementDefinition_GetType(msg);
-            Name = PXR_AchievementAPI.pvr_AchievementDefinition_GetName(msg);
-            BitfieldLength = PXR_AchievementAPI.pvr_AchievementDefinition_GetBitfieldLength(msg);
-            Target = PXR_AchievementAPI.pvr_AchievementDefinition_GetTarget(msg);
-            Title = PXR_AchievementAPI.pvr_AchievementDefinition_GetTitle(msg);
-            Description = PXR_AchievementAPI.pvr_AchievementDefinition_GetDescription(msg);
-            UnlockedDescription = PXR_AchievementAPI.pvr_AchievementDefinition_GetUnlockedDescription(msg);
-            UnlockedIcon = PXR_AchievementAPI.pvr_AchievementDefinition_GetUnlockedIcon(msg);
-            LockedIcon = PXR_AchievementAPI.pvr_AchievementDefinition_GetLockedIcon(msg);
-            IsSecrect = PXR_AchievementAPI.pvr_AchievementDefinition_GetIsSecrect(msg);
+            type = PXR_AchievementAPI.UPxr_AchievementDefinitionGetType(msg);
+            name = PXR_AchievementAPI.UPxr_AchievementDefinitionGetName(msg);
+            bitfieldLength = PXR_AchievementAPI.UPxr_AchievementDefinitionGetBitfieldLength(msg);
+            target = PXR_AchievementAPI.UPxr_AchievementDefinitionGetTarget(msg);
+            title = PXR_AchievementAPI.UPxr_AchievementDefinitionGetTitle(msg);
+            description = PXR_AchievementAPI.UPxr_AchievementDefinitionGetDescription(msg);
+            unlockedDescription = PXR_AchievementAPI.UPxr_AchievementDefinitionGetUnlockedDescription(msg);
+            unlockedIcon = PXR_AchievementAPI.UPxr_AchievementDefinitionGetUnlockedIcon(msg);
+            lockedIcon = PXR_AchievementAPI.UPxr_AchievementDefinitionGetLockedIcon(msg);
+            isSecrect = PXR_AchievementAPI.UPxr_AchievementDefinitionGetIsSecrect(msg);
         }
     }
 
@@ -36,14 +35,14 @@ namespace Unity.XR.PXR
     {
         public PXR_AchievementDefinitionList(AndroidJavaObject msg)
         {
-            var count = PXR_AchievementAPI.pvr_AchievementDefinitionArray_GetSize(msg);
+            var count = PXR_AchievementAPI.UPxr_AchievementDefinitionArrayGetSize(msg);
             data = new List<PXR_AchievementDefinition>(count);
             for (int i = 0; i < count; i++)
             {
-                data.Add(new PXR_AchievementDefinition(PXR_AchievementAPI.pvr_AchievementDefinitionArray_GetElement(msg, i)));
+                data.Add(new PXR_AchievementDefinition(PXR_AchievementAPI.UPxr_AchievementDefinitionArrayGetElement(msg, i)));
             }
 
-            nextUrl = PXR_AchievementAPI.pvr_AchievementDefinitionArray_GetNextUrl(msg);
+            nextUrl = PXR_AchievementAPI.UPxr_AchievementDefinitionArrayGetNextUrl(msg);
         }
 
     }

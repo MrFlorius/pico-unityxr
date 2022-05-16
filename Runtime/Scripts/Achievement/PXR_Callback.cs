@@ -1,11 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unity.XR.PXR
 {
     public static class PXR_Callback
     {
-        #region Adding and running request handlers
         internal static void AddRequest(Request request)
         {
             if (request.RequestID <= 2)
@@ -13,16 +12,16 @@ namespace Unity.XR.PXR
                 switch (request.RequestID)
                 {
                     case 0:
-                        Debug.LogError("An PARAM_INVALIDE error occurred. Request failed.");
+                        Debug.LogError("PXRLog PARAM INVALID. Request failed.");
                         break;
                     case 1:
-                        Debug.LogError("An NETWORK_INVALIDE error occurred. Request failed.");
+                        Debug.LogError("PXRLog NETWORK INVALID. Request failed.");
                         break;
                     case 2:
-                        Debug.LogError("An NOT_INTIALIZE error occurred. Request failed.");
+                        Debug.LogError("PXRLog NOT INITIALIZE. Request failed.");
                         break;
                     default:
-                        Debug.LogError("An unknown error occurred. Request failed.");
+                        Debug.LogError("PXRLog UNKNOWN ERROR. Request failed.");
                         break;
                 }
                 return;
@@ -42,7 +41,6 @@ namespace Unity.XR.PXR
 
                 HandleMessage(msg);
             }
-
         }
 
         internal static void RunLimitedCallbacks(uint limit)
@@ -65,23 +63,18 @@ namespace Unity.XR.PXR
             notificationCallbacks.Clear();
         }
 
-        #endregion
 
-        #region Callback Internals
         private static Dictionary<long, Request> requestIDsToRequests = new Dictionary<long, Request>();
         private static Dictionary<PXR_Message.MessageType, RequestCallback> notificationCallbacks = new Dictionary<PXR_Message.MessageType, RequestCallback>();
-
-
 
         private class RequestCallback
         {
             private PXR_Message.Callback messageCallback;
-
             public RequestCallback() { }
 
             public RequestCallback(PXR_Message.Callback callback)
             {
-                this.messageCallback = callback;
+                messageCallback = callback;
             }
 
             public virtual void HandleMessage(PXR_Message msg)
@@ -112,7 +105,7 @@ namespace Unity.XR.PXR
                     }
                     else
                     {
-                        Debug.LogError("Unable to handle message: " + msg.GetType());
+                        Debug.LogError("PXRLog Unable to handle message: " + msg.GetType());
                     }
                 }
             }
@@ -140,7 +133,5 @@ namespace Unity.XR.PXR
                 callbackHolder.HandleMessage(msg);
             }
         }
-
-        #endregion
     }
 }

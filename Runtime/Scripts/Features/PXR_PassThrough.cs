@@ -1,8 +1,4 @@
-/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System;
 using UnityEngine;
@@ -37,13 +33,13 @@ namespace Unity.XR.PXR
             loader = XRGeneralSettings.Instance.Manager.activeLoader as PXR_Loader;
             if (loader == null)
             {
-                Debug.LogError("Has no XR loader in the project!");
+                Debug.LogError("PXRLog Has no XR loader in the project!");
                 return;
             }
             passThroughSystem = loader.GetLoadedSubsystem<PXR_PassThroughSystem>();
             if (passThroughSystem == null)
             {
-                Debug.LogError("Has no XR Camera subsystem !");
+                Debug.LogError("PXRLog Has no XR Camera subsystem !");
                 return;
             }
             passThroughSystem.Start();
@@ -63,15 +59,10 @@ namespace Unity.XR.PXR
 
         void Update()
         {
-#if UNITY_INPUT_SYSTEM
-            //new confirm button
-#else
-            //Confirm button  
-            if (Input.GetKey(KeyCode.JoystickButton0))
+            if (UnityEngine.Input.GetKey(KeyCode.JoystickButton0))
             {
                 DrawTexture();
             }
-#endif
         }
 
         private void DrawTexture()

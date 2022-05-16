@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System;
 using System.Diagnostics;
@@ -30,9 +26,20 @@ namespace Unity.XR.PXR.Editor
 
         static PXR_SDKBuildCheck()
         {
+            ObjectFactory.componentWasAdded += ComponentWasAdded;
             BuildPlayerWindow.RegisterBuildPlayerHandler(OnBuild);
             doNotShowAgain = GetDoNotShowBuildWarning();
-            Debug.Log("[Build Check] RegisterBuildPlayerHandler,Already Do not show: " + doNotShowAgain);
+            Debug.Log("PXRLog [Build Check]RegisterBuildPlayerHandler,Already Do not show: " + doNotShowAgain);
+        }
+        static void ComponentWasAdded(Component com)
+        {
+            if (com.name == "XR Rig")
+            {
+                if (!com.GetComponent<PXR_Manager>() && com.GetType() != typeof(Transform))
+                {
+                    com.gameObject.AddComponent<PXR_Manager>();
+                }
+            }
         }
         static bool GetDoNotShowBuildWarning()
         {
@@ -66,7 +73,7 @@ namespace Unity.XR.PXR.Editor
             asset.doNotShowBuildWarning = true;
             EditorUtility.SetDirty(asset);
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();//must Refresh
+            AssetDatabase.Refresh();
         }
 
         public static void OnBuild(BuildPlayerOptions options)
@@ -87,8 +94,8 @@ namespace Unity.XR.PXR.Editor
                             throw new System.OperationCanceledException("Build was canceled by the user.");
                         //cancel
                         case 1:
-                            Debug.LogWarning("Warning: EntitlementCheck is highly recommended which can protect the copyright of app. You can enable it when App start-up in the Inspector of \"Menu/PXR_SDK/PlatformSettings\" and Enter your APPID. If you want to call the APIs as needed, please refer to the development Document.");
-                            Debug.Log("[Build Check] Start-time Entitlement Check Cancel The StartTime Entitlement Check status: " + PXR_PlatformSetting.Instance.startTimeEntitlementCheck.ToString());
+                            Debug.LogWarning("PXRLog Warning: EntitlementCheck is highly recommended which can protect the copyright of app. You can enable it when App start-up in the Inspector of \"Menu/PXR_SDK/PlatformSettings\" and Enter your APPID. If you want to call the APIs as needed, please refer to the development Document.");
+                            Debug.Log("PXRLog [Build Check] Start-time Entitlement Check Cancel The StartTime Entitlement Check status: " + PXR_PlatformSetting.Instance.startTimeEntitlementCheck.ToString());
 
                             BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
                             break;
@@ -96,8 +103,8 @@ namespace Unity.XR.PXR.Editor
                         case 2:
                             doNotShowAgain = true;
                             SetDoNotShowBuildWarning();
-                            Debug.LogWarning("Warning: EntitlementCheck is highly recommended which can protect the copyright of app. You can enable it when App start-up in the Inspector of \"Menu/PXR_SDK/PlatformSettings\" and Enter your APPID. If you want to call the APIs as needed, please refer to the development Document.");
-                            Debug.Log("[Build Check] Start-time Entitlement Check Do not show again The StartTime Entitlement Check status: " + PXR_PlatformSetting.Instance.startTimeEntitlementCheck.ToString());
+                            Debug.LogWarning("PXRLog Warning: EntitlementCheck is highly recommended which can protect the copyright of app. You can enable it when App start-up in the Inspector of \"Menu/PXR_SDK/PlatformSettings\" and Enter your APPID. If you want to call the APIs as needed, please refer to the development Document.");
+                            Debug.Log("PXRLog [Build Check] Start-time Entitlement Check Do not show again The StartTime Entitlement Check status: " + PXR_PlatformSetting.Instance.startTimeEntitlementCheck.ToString());
 
                             BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
                             break;
@@ -105,13 +112,13 @@ namespace Unity.XR.PXR.Editor
                 }
                 else
                 {
-                    Debug.Log("[Build Check]1 Enable Start-time Entitlement Check:" + PXR_PlatformSetting.Instance.startTimeEntitlementCheck + ", your AppID :" + PXR_PlatformSetting.Instance.appID);
+                    Debug.Log("PXRLog [Build Check]1 Enable Start-time Entitlement Check:" + PXR_PlatformSetting.Instance.startTimeEntitlementCheck + ", your AppID :" + PXR_PlatformSetting.Instance.appID);
                     BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
                 }
             }
             else
             {
-                Debug.Log("[Build Check]2 Enable Start-time Entitlement Check:" + PXR_PlatformSetting.Instance.startTimeEntitlementCheck + ", your AppID :" + PXR_PlatformSetting.Instance.appID);
+                Debug.Log("PXRLog [Build Check]2 Enable Start-time Entitlement Check:" + PXR_PlatformSetting.Instance.startTimeEntitlementCheck + ", your AppID :" + PXR_PlatformSetting.Instance.appID);
                 BuildPlayerWindow.DefaultBuildMethods.BuildPlayer(options);
             }
         }

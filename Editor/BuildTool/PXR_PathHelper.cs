@@ -1,11 +1,8 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System;
 using System.IO;
+using UnityEditor;
 
 public static class PXR_PathHelper
 {
@@ -28,5 +25,15 @@ public static class PXR_PathHelper
         }
 
         return relativePath;
+    }
+
+    public static string GetPXRPluginPath()
+    {
+        return Path.GetFullPath("Packages/com.unity.xr.picoxr/");
+    }
+
+    public static string GetPlayerActivityName()
+    {
+        return "\"" + PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android) + "/com.unity3d.player.UnityPlayerActivity\"";
     }
 }

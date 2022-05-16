@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System.IO;
 using Unity.XR.PXR;
@@ -135,8 +131,8 @@ public class PXR_SDKSettingEditor : EditorWindow
             AppID = PXR_PlatformSetting.Instance.appID;
         }
 
-        bool allapplied = IsAllApplied();
-        bool showWindow = !allapplied;
+        bool allApplied = IsAllApplied();
+        bool showWindow = !allApplied;
 
         if (IsIgnoreWindow())
         {
@@ -160,6 +156,7 @@ public class PXR_SDKSettingEditor : EditorWindow
         }
         return false;
     }
+
     public static bool IsAppIDChecked()
     {
         string path = PXR_SDKSettingEditor.assetPath + typeof(PXR_SDKSettingAsset).ToString() + ".asset";
@@ -170,7 +167,6 @@ public class PXR_SDKSettingEditor : EditorWindow
         }
         return false;
     }
-
 
     static void ShowSettingWindow()
     {
@@ -196,7 +192,7 @@ public class PXR_SDKSettingEditor : EditorWindow
         {
             window.titleContent = myTitleContent;
         }
-        ShowNoticeTextandChangeBtn();
+        ShowNoticeTextAndChangeBtn();
 
         GUIStyle styleSlide = new GUIStyle();
         styleSlide.normal.textColor = Color.white;
@@ -334,15 +330,15 @@ public class PXR_SDKSettingEditor : EditorWindow
             return false;
     }
 
-    void EditorConfigurations(string strconfiguration, bool torf, ref bool toggle)
+    void EditorConfigurations(string strConfiguration, bool enable, ref bool toggle)
     {
         EditorGUILayout.BeginHorizontal();
 
-        GUILayout.Label(strconfiguration, GUILayout.Width(500));
+        GUILayout.Label(strConfiguration, GUILayout.Width(500));
 
         GUIStyle styleApplied = new GUIStyle();
         styleApplied.normal.textColor = Color.green;
-        if (torf)
+        if (enable)
         {
             GUILayout.Label(strApplied[(int)language], styleApplied);
         }
@@ -354,15 +350,15 @@ public class PXR_SDKSettingEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
-    void ConfigEntitlementCheck(string strconfiguration, bool torf, ref bool toggle)
+    void ConfigEntitlementCheck(string strConfiguration, bool enable, ref bool toggle)
     {
         EditorGUILayout.BeginHorizontal();
-        var startEntitleCheckLabel = new GUIContent(strconfiguration, quizHova[(int)language]);
+        var startEntitleCheckLabel = new GUIContent(strConfiguration, quizHova[(int)language]);
         EditorGUILayout.LabelField(startEntitleCheckLabel, GUILayout.Width(500));
 
         GUIStyle styleApplied = new GUIStyle();
         styleApplied.normal.textColor = Color.green;
-        if (torf)
+        if (enable)
         {
             GUILayout.Label(strApplied[(int)language], styleApplied);
         }
@@ -443,11 +439,7 @@ public class PXR_SDKSettingEditor : EditorWindow
     void ShowLogo()
     {
         var resourcePath = GetResourcePath();
-#if !(UNITY_5_0)
         var logo = AssetDatabase.LoadAssetAtPath<Texture2D>(resourcePath + "logo.png");
-#else
-		var logo = Resources.LoadAssetAtPath<Texture2D>(resourcePath + "logo.png");
-#endif        
         if (logo)
         {
             var rect = GUILayoutUtility.GetRect(position.width, 150, GUI.skin.box);
@@ -455,7 +447,7 @@ public class PXR_SDKSettingEditor : EditorWindow
         }
     }
 
-    void ShowNoticeTextandChangeBtn()
+    void ShowNoticeTextAndChangeBtn()
     {
         EditorGUILayout.BeginHorizontal();
 
@@ -483,10 +475,10 @@ public class PXR_SDKSettingEditor : EditorWindow
     private void SaveAssetAppIDChecked()
     {
         PXR_SDKSettingAsset asset;
-        string assetpath = PXR_SDKSettingEditor.assetPath + typeof(PXR_SDKSettingAsset).ToString() + ".asset";
-        if (File.Exists(assetpath))
+        string assetPath = PXR_SDKSettingEditor.assetPath + typeof(PXR_SDKSettingAsset).ToString() + ".asset";
+        if (File.Exists(assetPath))
         {
-            asset = AssetDatabase.LoadAssetAtPath<PXR_SDKSettingAsset>(assetpath);
+            asset = AssetDatabase.LoadAssetAtPath<PXR_SDKSettingAsset>(assetPath);
         }
         else
         {
@@ -588,10 +580,10 @@ public class PXR_SettingMessageBoxEditor : EditorWindow
     private void SaveAssetDataBase()
     {
         PXR_SDKSettingAsset asset;
-        string assetpath = PXR_SDKSettingEditor.assetPath + typeof(PXR_SDKSettingAsset).ToString() + ".asset";
-        if (File.Exists(assetpath))
+        string assetPath = PXR_SDKSettingEditor.assetPath + typeof(PXR_SDKSettingAsset).ToString() + ".asset";
+        if (File.Exists(assetPath))
         {
-            asset = AssetDatabase.LoadAssetAtPath<PXR_SDKSettingAsset>(assetpath);
+            asset = AssetDatabase.LoadAssetAtPath<PXR_SDKSettingAsset>(assetPath);
         }
         else
         {
@@ -625,6 +617,23 @@ public class PXR_SDKQualitySetting
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
 
         SetvSyncCount();
+        SetAntiAliasingLevel(4);
+    }
+
+    static void SetAntiAliasingLevel(int level)
+    {
+        int currentLevel = QualitySettings.GetQualityLevel();
+        for (int i = currentLevel; i >= 1; i--)
+        {
+            QualitySettings.DecreaseLevel(true);
+            QualitySettings.antiAliasing = level;
+        }
+        QualitySettings.SetQualityLevel(currentLevel, true);
+        for (int i = currentLevel; i < 10; i++)
+        {
+            QualitySettings.IncreaseLevel(true);
+            QualitySettings.antiAliasing = level;
+        }
     }
 
     static void SetvSyncCount()

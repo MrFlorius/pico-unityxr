@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,26 +12,21 @@ namespace Unity.XR.PXR.Editor
     public class PXR_SettingsEditor : UnityEditor.Editor
     {
         private const string StereoRenderingModeAndroid = "stereoRenderingModeAndroid";
-        private const string UseDefaultRenderTexture = "useDefaultRenderTexture";
-        private const string EyeRenderTextureResolution = "eyeRenderTextureResolution";
+        private const string SystemDisplayFrequency = "systemDisplayFrequency";
 
         static GUIContent guiStereoRenderingMode = EditorGUIUtility.TrTextContent("Stereo Rendering Mode");
-        static GUIContent guiUseDefaultRenderTexture = EditorGUIUtility.TrTextContent("Use Default Render Texture");
-        static GUIContent guiEyeRenderTextureResolution = EditorGUIUtility.TrTextContent("Render Texture Resolution");
+        static GUIContent guiDisplayFrequency = EditorGUIUtility.TrTextContent("Display Refresh Rates");
 
 
         private SerializedProperty stereoRenderingModeAndroid;
-        private SerializedProperty useDefaultRenderTexture;
-        private SerializedProperty eyeRenderTextureResolution;
+        private SerializedProperty systemDisplayFrequency;
 
         void OnEnable()
         {
             if (stereoRenderingModeAndroid == null) 
                 stereoRenderingModeAndroid = serializedObject.FindProperty(StereoRenderingModeAndroid);
-            if (useDefaultRenderTexture == null) 
-                useDefaultRenderTexture = serializedObject.FindProperty(UseDefaultRenderTexture);
-            if (eyeRenderTextureResolution == null) 
-                eyeRenderTextureResolution = serializedObject.FindProperty(EyeRenderTextureResolution);
+            if (systemDisplayFrequency == null)
+                systemDisplayFrequency = serializedObject.FindProperty(SystemDisplayFrequency);
         }
 
         public override void OnInspectorGUI()
@@ -58,11 +49,7 @@ namespace Unity.XR.PXR.Editor
             if (selectedBuildTargetGroup == BuildTargetGroup.Android)
             {
                 EditorGUILayout.PropertyField(stereoRenderingModeAndroid, guiStereoRenderingMode);
-                EditorGUILayout.PropertyField(useDefaultRenderTexture, guiUseDefaultRenderTexture);
-                if (!((PXR_Settings)target).useDefaultRenderTexture)
-                {
-                    EditorGUILayout.PropertyField(eyeRenderTextureResolution, guiEyeRenderTextureResolution);
-                }
+                EditorGUILayout.PropertyField(systemDisplayFrequency, guiDisplayFrequency);
             }
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndVertical();

@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System.Collections;
 using System.IO;
@@ -52,9 +48,10 @@ namespace Unity.XR.PXR
             Neo2,
             Neo3,
         }
-
+#if UNITY_EDITOR
         [SerializeField]
         private ControllerSimulationType controllerSimulation = ControllerSimulationType.None;
+#endif
         public PXR_ControllerLoader(PXR_Input.Controller controller)
         {
             hand = controller;
@@ -62,9 +59,6 @@ namespace Unity.XR.PXR
 
         void Awake()
         {
-#if !UNITY_EDITOR && UNITY_ANDROID
-            PXR_Plugin.System.UPxr_GetIntConfig((int)GlobalIntConfigs.CtrlModelLoadingPri, ref systemOrLocal);
-#endif
 #if UNITY_EDITOR
             switch (controllerSimulation)
             {
@@ -98,12 +92,12 @@ namespace Unity.XR.PXR
 
         void Start()
         {
+            controllerType = PXR_Plugin.Controller.UPxr_GetControllerType();
             if (!customModel)
             {
-#if !UNITY_EDITOR && UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
                 LoadResFromJson();
 #endif
-                controllerType = PXR_Plugin.Controller.UPxr_GetControllerType();
                 leftControllerState = PXR_Input.IsControllerConnected(PXR_Input.Controller.LeftController);
                 rightControllerState = PXR_Input.IsControllerConnected(PXR_Input.Controller.RightController);
                 if (hand == PXR_Input.Controller.LeftController)
@@ -222,7 +216,7 @@ namespace Unity.XR.PXR
             }
             else
             {
-                Debug.LogError("LoadJsonFromSystem Error");
+                Debug.LogError("PXRLog LoadJsonFromSystem Error");
             }
         }
 
@@ -279,12 +273,12 @@ namespace Unity.XR.PXR
 
         private void LoadControllerFromSystem(int id)
         {
-            var syscontrollername = controllerType.ToString() + id.ToString() + ".obj";
-            var fullFilePath = modelFilePath + syscontrollername;
+            var sysControllerName = controllerType.ToString() + id.ToString() + ".obj";
+            var fullFilePath = modelFilePath + sysControllerName;
 
             if (!File.Exists(fullFilePath))
             {
-                Debug.Log("Load Obj From Prefab");
+                Debug.Log("PXRLog Load Obj From Prefab");
             }
             else
             {
@@ -323,30 +317,30 @@ namespace Unity.XR.PXR
                 prePath = modelFilePath + controllerName;
             }
 
-            var texturepath = prePath + "_idle" + texFormat;
-            visual.textureIdle = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_app" + texFormat;
-            visual.textureApp = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_home" + texFormat;
-            visual.textureHome = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_touch" + texFormat;
-            visual.textureTouchpad = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_volume_down" + texFormat;
-            visual.textureVolDown = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_volume_up" + texFormat;
-            visual.textureVolUp = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_trigger" + texFormat;
-            visual.textureTrigger = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_a" + texFormat;
-            visual.textureA = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_b" + texFormat;
-            visual.textureB = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_x" + texFormat;
-            visual.textureX = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_y" + texFormat;
-            visual.textureY = LoadOneTexture(texturepath, fromRes);
-            texturepath = prePath + "_grip" + texFormat;
-            visual.textureGrip = LoadOneTexture(texturepath, fromRes);
+            var texturePath = prePath + "_idle" + texFormat;
+            visual.textureIdle = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_app" + texFormat;
+            visual.textureApp = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_home" + texFormat;
+            visual.textureHome = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_touch" + texFormat;
+            visual.textureTouchpad = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_volume_down" + texFormat;
+            visual.textureVolDown = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_volume_up" + texFormat;
+            visual.textureVolUp = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_trigger" + texFormat;
+            visual.textureTrigger = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_a" + texFormat;
+            visual.textureA = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_b" + texFormat;
+            visual.textureB = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_x" + texFormat;
+            visual.textureX = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_y" + texFormat;
+            visual.textureY = LoadOneTexture(texturePath, fromRes);
+            texturePath = prePath + "_grip" + texFormat;
+            visual.textureGrip = LoadOneTexture(texturePath, fromRes);
         }
 
         private Texture2D LoadOneTexture(string filepath, bool fromRes)
@@ -357,11 +351,11 @@ namespace Unity.XR.PXR
             }
             else
             {
-                int t_w = (int)curControllerData["tex_width"];
-                int t_h = (int)curControllerData["tex_height"];
-                var m_tex = new Texture2D(t_w, t_h);
-                m_tex.LoadImage(ReadPNG(filepath));
-                return m_tex;
+                int tW = (int)curControllerData["tex_width"];
+                int tH = (int)curControllerData["tex_height"];
+                var mTex = new Texture2D(tW, tH);
+                mTex.LoadImage(ReadPNG(filepath));
+                return mTex;
             }
         }
 

@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
@@ -42,7 +38,7 @@ namespace Unity.XR.PXR
                 CommonDic.getInstance().loginMsg = jsrr[MSG].ToString();
             }
 
-            Debug.Log("调用login回调:" + LoginInfo);
+            Debug.Log("PXRLog LoginCallback LoginInfo:" + LoginInfo);
         }
 
         public void QueryOrPayCallback(string queryOrPayInfo)
@@ -63,7 +59,7 @@ namespace Unity.XR.PXR
 
             SetMassage(queryOrPayInfo);
             DemoController.showLoading();
-            Debug.Log("调用pay回调:" + queryOrPayInfo);
+            Debug.Log("PXRLog QueryOrPayCallback queryOrPayInfo:" + queryOrPayInfo);
         }
 
         public void UserInfoCallback(string userInfo)
@@ -73,7 +69,7 @@ namespace Unity.XR.PXR
 
             SetMassage(userInfo);
             DemoController.showLoading();
-            Debug.Log("调用userInfo回调:" + userInfo);
+            Debug.Log("PXRLog UserInfoCallback userInfo:" + userInfo);
         }
 
         public void SetMassage(string massage)
@@ -84,7 +80,7 @@ namespace Unity.XR.PXR
             }
             else
             {
-                Debug.LogError("无接收该Message的控件");
+                Debug.LogError("PXRLog There is no gameObject to receive this message");
             }
         }
 

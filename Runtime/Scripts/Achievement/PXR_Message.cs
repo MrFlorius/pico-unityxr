@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Unity.XR.PXR
 {
@@ -23,44 +23,43 @@ namespace Unity.XR.PXR
         public delegate void Callback(PXR_Message message);
         public PXR_Message(AndroidJavaObject msg)
         {
-            type = (MessageType)PXR_AchievementAPI.pvr_Message_GetType(msg);
-            var isError = PXR_AchievementAPI.pvr_Message_IsError(msg);
-            requestID = PXR_AchievementAPI.pvr_Message_GetRequestID(msg);
+            type = (MessageType)PXR_AchievementAPI.UPxr_MessageGetType(msg);
+            var isError = PXR_AchievementAPI.UPxr_MessageIsError(msg);
+            requestID = PXR_AchievementAPI.UPxr_MessageGetRequestID(msg);
             if (isError)
             {
                 error = new Error(
-                  PXR_AchievementAPI.pvr_Error_GetCode(msg),
-                  PXR_AchievementAPI.pvr_Error_GetMessage(msg),
-                  PXR_AchievementAPI.pvr_Error_GetHttpCode(msg));
+                  PXR_AchievementAPI.UPxr_ErrorGetCode(msg),
+                  PXR_AchievementAPI.UPxr_ErrorGetMessage(msg),
+                  PXR_AchievementAPI.UPxr_ErrorGetHttpCode(msg));
             }
             else if (PXR_AchievementCore.LogMessages)
             {
-                var message = PXR_AchievementAPI.pvr_Message_GetString(msg);
+                var message = PXR_AchievementAPI.UPxr_MessageGetString(msg);
                 if (message != null)
                 {
                     Debug.Log(message);
                 }
                 else
                 {
-                    Debug.Log(string.Format("null message string {0}", msg));
+                    Debug.Log(string.Format("PXRLog null message string {0}", msg));
                 }
             }
         }
         public enum MessageType : uint
         {
             Unknown,
-
-            Achievements_AddCount = 0x03E76231,
-            Achievements_AddFields = 0x14AA2129,
-            Achievements_GetAllDefinitions = 0x03D3458D,
-            Achievements_GetAllProgress = 0x4F9FDE1D,
-            Achievements_GetDefinitionsByName = 0x629101BC,
-            Achievements_GetNextAchievementDefinitionArrayPage = 0x2A7DD255,
-            Achievements_GetNextAchievementProgressArrayPage = 0x2F42E727,
-            Achievements_GetProgressByName = 0x152663B1,
-            Achievements_Unlock = 0x593CCBDD,
-            Achievements_WriteAchievementProgress = 0x736BBDD,
-            Achievements_VerifyAccessToken = 0x032D103C
+            AchievementsAddCount = 0x03E76231,
+            AchievementsAddFields = 0x14AA2129,
+            AchievementsGetAllDefinitions = 0x03D3458D,
+            AchievementsGetAllProgress = 0x4F9FDE1D,
+            AchievementsGetDefinitionsByName = 0x629101BC,
+            AchievementsGetNextAchievementDefinitionArrayPage = 0x2A7DD255,
+            AchievementsGetNextAchievementProgressArrayPage = 0x2F42E727,
+            AchievementsGetProgressByName = 0x152663B1,
+            AchievementsUnlock = 0x593CCBDD,
+            AchievementsWriteAchievementProgress = 0x736BBDD,
+            AchievementsVerifyAccessToken = 0x032D103C
         };
 
         public MessageType Type { get { return type; } }
@@ -85,26 +84,26 @@ namespace Unity.XR.PXR
             }
 
             PXR_Message message = null;
-            MessageType message_type = (MessageType)PXR_AchievementAPI.pvr_Message_GetType(messageHandle);
+            MessageType message_type = (MessageType)PXR_AchievementAPI.UPxr_MessageGetType(messageHandle);
 
             switch (message_type)
             {
-                case MessageType.Achievements_GetAllDefinitions:
-                case MessageType.Achievements_GetDefinitionsByName:
-                case MessageType.Achievements_GetNextAchievementDefinitionArrayPage:
+                case MessageType.AchievementsGetAllDefinitions:
+                case MessageType.AchievementsGetDefinitionsByName:
+                case MessageType.AchievementsGetNextAchievementDefinitionArrayPage:
                     message = new MessageWithAchievementDefinitions(messageHandle);
                     break;
 
-                case MessageType.Achievements_GetAllProgress:
-                case MessageType.Achievements_GetNextAchievementProgressArrayPage:
-                case MessageType.Achievements_GetProgressByName:
+                case MessageType.AchievementsGetAllProgress:
+                case MessageType.AchievementsGetNextAchievementProgressArrayPage:
+                case MessageType.AchievementsGetProgressByName:
                     message = new MessageWithAchievementProgressList(messageHandle);
                     break;
 
-                case MessageType.Achievements_AddCount:
-                case MessageType.Achievements_AddFields:
-                case MessageType.Achievements_Unlock:
-                case MessageType.Achievements_VerifyAccessToken:
+                case MessageType.AchievementsAddCount:
+                case MessageType.AchievementsAddFields:
+                case MessageType.AchievementsUnlock:
+                case MessageType.AchievementsVerifyAccessToken:
                     message = new MessageWithAchievementUpdate(messageHandle);
                     break;
 
@@ -115,14 +114,14 @@ namespace Unity.XR.PXR
 
         public static PXR_Message PopMessage()
         {
-            var messageHandle = PXR_AchievementAPI.PopMessage();
+            var messageHandle = PXR_AchievementAPI.UPxr_PopMessage();
 
             PXR_Message message = ParseMessageHandle(messageHandle);
 
             return message;
         }
 
-        internal delegate PXR_Message ExtraMessageTypesHandler(AndroidJavaObject messageHandle, MessageType message_type);
+        internal delegate PXR_Message ExtraMessageTypesHandler(AndroidJavaObject messageHandle, MessageType messageType);
         internal static ExtraMessageTypesHandler HandleExtraMessageTypes { set; private get; }
     }
 
@@ -163,21 +162,21 @@ namespace Unity.XR.PXR
         public override string GetString() { return Data; }
         protected override string GetDataFromMessage(AndroidJavaObject msg)
         {
-            return PXR_AchievementAPI.pvr_Message_GetString(msg);
+            return PXR_AchievementAPI.UPxr_MessageGetString(msg);
         }
     }
     public class Error
     {
         public Error(int code, string message, int httpCode)
         {
-            Message = message;
-            Code = code;
-            HttpCode = httpCode;
+            this.message = message;
+            this.code = code;
+            this.httpCode = httpCode;
         }
 
-        public readonly int Code;
-        public readonly int HttpCode;
-        public readonly string Message;
+        public readonly int code;
+        public readonly int httpCode;
+        public readonly string message;
     }
 
 }

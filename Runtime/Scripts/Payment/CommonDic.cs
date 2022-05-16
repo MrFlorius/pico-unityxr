@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using LitJson;
 using System.Collections.Generic;
@@ -239,36 +235,36 @@ namespace Unity.XR.PXR
 
         public static void InitDicData(Dictionary<string, string> mydic)
         {
-            mydic.Add("00000", "网络异常");
-            mydic.Add("10000", "登录成功");
-            mydic.Add("10001", "用户未登陆");
-            mydic.Add("10002", "请输入正确金额");
-            mydic.Add("10003", "登陆过期，请重新登陆");
-            mydic.Add("11000", "商户验证成功");
-            mydic.Add("11001", "商户验证失败");
-            mydic.Add("11002", "用户验证参数错误或请求过期");
-            mydic.Add("11003", "商户未验证");
-            mydic.Add("12000", "支付成功");
-            mydic.Add("12001", "支付失败");
-            mydic.Add("12003", "P币不足");
-            mydic.Add("12004", "余额可用");
-            mydic.Add("13000", "生成订单");
-            mydic.Add("13001", "获取数据失败");
-            mydic.Add("13002", "生成订单失败");
-            mydic.Add("14000", "查询订单成功");
-            mydic.Add("14001", "订单不存在/有误");
-            mydic.Add("14002", "用户取消支付操作");
-            mydic.Add("15000", "未输入商品信息");
-            mydic.Add("15001", "未输入预付ID");
-            mydic.Add("15002", "请输入Pico支付订单号或商户订单号");
-            mydic.Add("NOAUTH", "商户无此接口权限");
-            mydic.Add("SYSTEMERROR", "系统错误");
-            mydic.Add("APP_ID_NOT_EXIST", "APP_ID不存在");
-            mydic.Add("MCHID_NOT_EXIST", "MCHID不存在");
-            mydic.Add("APP_ID_MCHID_NOT_MATCH", "app_id和mch_id不匹配ID");
-            mydic.Add("LACK_PARAMS", "缺少参数");
-            mydic.Add("SIGNERROR", "签名错误");
-            mydic.Add("NO_DATA", "没有查询到数据");
+            mydic.Add("00000", "Network exception");
+            mydic.Add("10000", "Login succeeded");
+            mydic.Add("10001", "User not logged in");
+            mydic.Add("10002", "Please enter the correct amount");
+            mydic.Add("10003", "Login expired, please login again");
+            mydic.Add("11000", "Merchant verification succeeded");
+            mydic.Add("11001", "Merchant verification failed");
+            mydic.Add("11002", "User authentication parameter error or request expiration");
+            mydic.Add("11003", "Merchant not verified");
+            mydic.Add("12000", "Payment successful");
+            mydic.Add("12001", "Payment failed");
+            mydic.Add("12003", "Insufficient P currency");
+            mydic.Add("12004", "Balance available");
+            mydic.Add("13000", "Generate order");
+            mydic.Add("13001", "Failed to get data");
+            mydic.Add("13002", "Failed to generate order");
+            mydic.Add("14000", "Order query succeeded");
+            mydic.Add("14001", "Order does not exist");
+            mydic.Add("14002", "User cancels payment");
+            mydic.Add("15000", "Product information not entered");
+            mydic.Add("15001", "Prepaid id not entered");
+            mydic.Add("15002", "Please enter Pico payment order number or merchant order number");
+            mydic.Add("NOAUTH", "The merchant has no permission to this interface");
+            mydic.Add("SYSTEMERROR", "System error");
+            mydic.Add("APP_ID_NOT_EXIST", "APP_ID not exist");
+            mydic.Add("MCHID_NOT_EXIST", "MCHID not exist");
+            mydic.Add("APP_ID_MCHID_NOT_MATCH", "app_id and mch_id not match");
+            mydic.Add("LACK_PARAMS", "Missing parameter");
+            mydic.Add("SIGNERROR", "Signature error");
+            mydic.Add("NO_DATA", "No data found");
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System.Collections;
 using UnityEngine;
@@ -28,7 +24,7 @@ namespace Unity.XR.PXR
             CreateFadeMesh();
             SetCurrentAlpha(0);
         }
-        void Start()
+        void OnEnable()
         {
             StartCoroutine(ScreenFade(1, 0));
         }

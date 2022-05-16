@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System;
 using UnityEngine;
@@ -19,7 +15,7 @@ namespace Unity.XR.PXR
         /// <param name="value"></param>
         public static void SetVisible(bool value)
         {
-            PXR_Plugin.Boundary.UPxr_SetBoundaryVisible(value);
+            PXR_Plugin.Boundary.UPxr_SetBoundaryVisiable(value);
         }
 
         /// <summary>
@@ -30,7 +26,7 @@ namespace Unity.XR.PXR
         /// <param name="value"></param>
         public static bool GetVisible()
         {
-            return PXR_Plugin.Boundary.UPxr_GetBoundaryVisible();
+            return PXR_Plugin.Boundary.UPxr_GetBoundaryVisiable();
         }
 
         /// <summary>
@@ -42,6 +38,7 @@ namespace Unity.XR.PXR
             return PXR_Plugin.Boundary.UPxr_GetBoundaryConfigured();
         }
 
+        /// <summary>
         /// Return result of whether Safety Boundary is enabled.
         /// </summary>
         /// <returns></returns>
@@ -51,14 +48,14 @@ namespace Unity.XR.PXR
         }
 
         /// <summary>
-        ///  Returns the result of testing a tracked node against the specified boundary type
+        ///  Returns the result of testing a tracked node against the specified boundary type.
         /// </summary>
         /// <param name="node"></param>
         /// <param name="boundaryType"></param>
         /// <returns></returns>
-        public static BoundaryTestResult TestNode(BoundaryTrackingNode node, BoundaryType boundaryType)
+        public static PxrBoundaryTriggerInfo TestNode(BoundaryTrackingNode node, BoundaryType boundaryType)
         {
-            return PXR_Plugin.Boundary.UPxr_TestBoundaryNode(node, boundaryType);
+            return PXR_Plugin.Boundary.UPxr_TestNodeIsInBoundary(node, boundaryType);
         }
 
         /// <summary>
@@ -67,13 +64,13 @@ namespace Unity.XR.PXR
         /// <param name="point">the coordinate of the point</param>
         /// <param name="boundaryType">OuterBoundary or PlayArea</param>
         /// <returns></returns>
-        public static BoundaryTestResult TestPoint(Vector3 point, BoundaryType boundaryType)
+        public static PxrBoundaryTriggerInfo TestPoint(PxrVector3f point, BoundaryType boundaryType)
         {
-            return PXR_Plugin.Boundary.UPxr_TestBoundaryPoint(point, boundaryType);
+            return PXR_Plugin.Boundary.UPxr_TestPointIsInBoundary(point, boundaryType);
         }
 
         /// <summary>
-        /// Return the boundary geometry points
+        /// Return the boundary geometry points.
         /// </summary>
         /// <param name="boundaryType">OuterBoundary or PlayArea</param>
         /// <returns>Boundary geometry point-collection num</returns>
@@ -83,7 +80,7 @@ namespace Unity.XR.PXR
         }
 
         /// <summary>
-        /// Get the size of self-defined safety boundary PlayArea
+        /// Get the size of self-defined safety boundary PlayArea.
         /// </summary>
         /// <param name="boundaryType"></param>
         /// <returns></returns>
@@ -93,18 +90,18 @@ namespace Unity.XR.PXR
         }
 
         /// <summary>
-        /// Get the camera image of Neo 2 and set it as the environmental background
+        /// Get the camera image of Neo and set it as the environmental background.
         /// </summary>
-        /// <param name="value">whether SeeThrough is enabled or not, true enabled, false disenabled</param>
+        /// <param name="value">whether SeeThrough is enabled or not, true enabled, false disabled</param>
         public static void EnableSeeThroughManual(bool value)
         {
-            PXR_Plugin.Boundary.UPxr_EnableSeeThroughManual(value);
+            PXR_Plugin.Boundary.UPxr_SetSeeThroughBackground(value);
         }
 
         /// <summary>
-        /// Get Boundary Dialog State
+        /// Get Boundary Dialog State.
         /// </summary>
-        /// <returns>NothingDialog = -1,GobackDialog = 0,ToofarDialog = 1,LostDialog = 2,LostNoReason = 3,LostCamera = 4,LostHighLight = 5,LostLowLight = 6,LostLowFeatureCount = 7,LostReLocation = 8</returns>
+        /// <returns>NothingDialog = -1,Go-backDialog = 0,Too-farDialog = 1,LostDialog = 2,LostNoReason = 3,LostCamera = 4,LostHighLight = 5,LostLowLight = 6,LostLowFeatureCount = 7,LostReLocation = 8</returns>
         public static int GetDialogState()
         {
             return PXR_Plugin.Boundary.UPxr_GetDialogState();

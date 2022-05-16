@@ -1,36 +1,43 @@
 ﻿Shader "PXR_SDK/PXR_UnderlayHole"
 {
-	Properties
-	{
-	   _MainTex("Albedo (RGB)", 2D) = "black" {}
-	}
-		
 	SubShader
 	{
-			Tags { "Queue" = "Geometry+1" "RenderType" = "Opaque" }
-			LOD 200
-			//ColorMask A
+		Tags {"Queue" = "Geometry+1" "RenderType" = "Transparent"}
+		LOD 200
 
+		Pass
+		{
 			CGPROGRAM
-		   #pragma surface surf Standard fullforwardshadows keepalpha
+			#pragma vertex vert
+			#pragma fragment frag
 
-		   sampler2D _MainTex;
+			#include "UnityCG.cginc"
 
-		   struct Input 
-		   {
-			   float2 uv_MainTex;
-		   };
+			struct appdata
+			{
+				float4 vertex : POSITION;
+			};
 
+			struct v2f
+			{
+				float4 vertex : SV_POSITION;
+			};
 
-		   void surf(Input IN, inout SurfaceOutputStandard o) 
-		   {
-			   fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
-			   o.Albedo = c.rgb;
-			   o.Alpha = 0.;
-		   }
-		   ENDCG
+			fixed4 _Transparent = fixed4(1, 1, 1, 0);
+
+			v2f vert(appdata v)
+			{
+				v2f o;
+				o.vertex = UnityObjectToClipPos(v.vertex);
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_Target
+			{
+				fixed4 col = _Transparent;
+				return col;
+			}
+			ENDCG
+		}
 	}
-
-		
-	FallBack "Diffuse"
 }

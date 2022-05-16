@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,7 +53,7 @@ namespace Unity.XR.PXR
 
         public static void RefreshTips()
         {
-#if !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             if(toolTips != null)
                 toolTips.LoadTextFromJson();
 #endif

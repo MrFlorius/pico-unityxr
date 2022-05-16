@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.XR;
@@ -28,12 +24,8 @@ namespace Unity.XR.PXR
         public static InputFeatureUsage<Vector3> rightEyePositionGuide = new InputFeatureUsage<Vector3>("RightEyePositionGuide");
         public static InputFeatureUsage<Vector3> foveatedGazeDirection = new InputFeatureUsage<Vector3>("FoveatedGazeDirection");
         public static InputFeatureUsage<uint> foveatedGazeTrackingState = new InputFeatureUsage<uint>("FoveatedGazeTrackingState");
-
-
         public static InputFeatureUsage<bool> triggerTouch = new InputFeatureUsage<bool>("TriggerTouch");
-        public static InputFeatureUsage<bool> thumbRestTouch = new InputFeatureUsage<bool>("ThumbRestTouch");
         public static InputFeatureUsage<float> grip1DAxis = new InputFeatureUsage<float>("Grip1DAxis");
-
         public static InputFeatureUsage<bool> controllerStatus = new InputFeatureUsage<bool>("ControllerStatus");
 
     }

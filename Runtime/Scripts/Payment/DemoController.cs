@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 #if !UNITY_EDITOR
 #if UNITY_ANDROID
@@ -51,10 +47,7 @@ namespace Unity.XR.PXR
 
         void Update()
         {
-#if UNITY_INPUT_SYSTEM
-            //new button
-#else
-            if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Escape))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Joystick1Button1) || UnityEngine.Input.GetKeyDown(KeyCode.Escape))
             {
                 if (InputPanel.activeInHierarchy)
                 {
@@ -65,7 +58,6 @@ namespace Unity.XR.PXR
                     Application.Quit();
                 }
             }
-#endif
         }
 
         void InitDelegate()
@@ -146,7 +138,7 @@ namespace Unity.XR.PXR
             }
             else
             {
-                Debug.LogError("用户自定义，非演示demo");
+                Debug.LogError("PXRLog User defined, non demo.");
             }
 
         }
@@ -160,7 +152,7 @@ namespace Unity.XR.PXR
             CommonDic.getInstance().setParameters("goods_tag", "game");
             CommonDic.getInstance().setParameters("notify_url", "www.picovr.com");
             CommonDic.getInstance().setParameters("pay_code", GameObject.Find("CodeText").GetComponent<Text>().text);
-            Debug.Log("商品码支付" + GameObject.Find("CodeText").GetComponent<Text>().text);
+            Debug.Log("PXRLog DoPayByCode" + GameObject.Find("CodeText").GetComponent<Text>().text);
             StartLoading();
             GameObject.Find("CodeText").GetComponent<Text>().text = "";
             InputPanel.SetActive(false);
@@ -171,7 +163,7 @@ namespace Unity.XR.PXR
         {
             if (CommonDic.getInstance().access_token.Equals(""))
             {
-                GameObject.Find("MassageInfo").GetComponent<Text>().text = "{code:exception,msg:请先登录}";
+                GameObject.Find("MassageInfo").GetComponent<Text>().text = "{code:exception,msg:Please log in first}";
                 currentOrderID = "";
                 StopLoading();
                 return false;

@@ -1,21 +1,21 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Unity.XR.PXR
 {
     public sealed class PXR_Request<T> : Request
     {
-        private PXR_Message<T>.Callback callback_ = null;
+        private PXR_Message<T>.Callback msgCallback = null;
 
         public PXR_Request(long requestID) : base(requestID) { }
 
         public PXR_Request<T> OnComplete(PXR_Message<T>.Callback callback)
         {
-            if (callback_ != null)
+            if (msgCallback != null)
             {
                 throw new UnityException("Attempted to attach multiple handlers to a Request.  This is not allowed.");
             }
 
-            callback_ = callback;
+            msgCallback = callback;
             PXR_Callback.AddRequest(this);
             return this;
         }
@@ -24,13 +24,13 @@ namespace Unity.XR.PXR
         {
             if (!(msg is PXR_Message<T>))
             {
-                Debug.LogError("Unable to handle message: " + msg.GetType());
+                Debug.LogError("PXRLog Unable to handle message: " + msg.GetType());
                 return;
             }
 
-            if (callback_ != null)
+            if (msgCallback != null)
             {
-                callback_((PXR_Message<T>)msg);
+                msgCallback((PXR_Message<T>)msg);
                 return;
             }
 
@@ -65,7 +65,6 @@ namespace Unity.XR.PXR
 
         public static void RunCallbacks(uint limit = 0)
         {
-            // default of 0 will run callbacks on all messages on the queue
             if (limit == 0)
             {
                 PXR_Callback.RunCallbacks();

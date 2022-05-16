@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System;
 using Unity.XR.PXR;
@@ -11,48 +7,48 @@ using UnityEngine;
 [UnityEngine.Scripting.Preserve]
 public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
 {
-    bool m_Running = false;
-    public override bool running => m_Running;
+    bool isRunning = false;
+    public override bool running => isRunning;
 
-    PXR_PassThroughProvider m_Provider = new PXR_PassThroughProvider();
+    PXR_PassThroughProvider ptProvider = new PXR_PassThroughProvider();
 
 #if !UNITY_2020_1_OR_NEWER
-    bool m_Destroyed;
+    bool isDestroyed;
 #endif
 
     public override void Start()
     {
-        if (!m_Running)
+        if (!isRunning)
         {
-            m_Provider.Start();
+            ptProvider.Start();
         }
-        m_Running = true;
+        isRunning = true;
     }
 
     public override void Stop()
     {
-        if (m_Running)
+        if (isRunning)
         {
-            m_Provider.Stop();
+            ptProvider.Stop();
         }
-        m_Running = false;
+        isRunning = false;
     }
 
     public void UpdateTextures()
     {
-        m_Provider.UpdateTextures();
+        ptProvider.UpdateTextures();
     }
 
     protected override void OnDestroy()
     {
 #if !UNITY_2020_1_OR_NEWER
-        if (m_Destroyed)
+        if (isDestroyed)
             return;
-        m_Destroyed = true;
+        isDestroyed = true;
 #endif
         Stop();
-        m_Running = false;
-        m_Provider.Destroy();
+        isRunning = false;
+        ptProvider.Destroy();
     }
 
     public int UpdateCameraTextureID(int eye)
@@ -73,13 +69,13 @@ public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
 
     class PXR_PassThroughProvider
     {
-        IntPtr m_RenderEventFunc;
+        IntPtr renderEventFunc;
 
         public PXR_PassThroughProvider()
         {
             if (SystemInfo.graphicsMultiThreaded)
             {
-                m_RenderEventFunc = PXR_Plugin.PassThrough.UPxr_PassThroughGetRenderEventFunc();
+                renderEventFunc = PXR_Plugin.PassThrough.UPxr_PassThroughGetRenderEventFunc();
             }
         }
 
@@ -101,17 +97,13 @@ public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
 
         void IssueRenderEventAndWaitForCompletion(RenderEvent renderEvent)
         {
-            // NB: If m_RenderEventFunc is zero, it means
-            //     1. We are running in the Editor.
-            //     2. The UnityARCore library could not be loaded or similar catastrophic failure.
-            if (m_RenderEventFunc != IntPtr.Zero)
+            if (renderEventFunc != IntPtr.Zero)
             {
                 PXR_Plugin.PassThrough.UPxr_PassThroughSetRenderEventPending();
-                GL.IssuePluginEvent(m_RenderEventFunc, (int)renderEvent);
+                GL.IssuePluginEvent(renderEventFunc, (int)renderEvent);
                 PXR_Plugin.PassThrough.UPxr_PassThroughWaitForRenderEvent();
             }
         }
-
 
         void CreateTexture()
         {
@@ -121,7 +113,7 @@ public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
             }
             else
             {
-                PXR_Plugin.PassThrough.UPxr_PassThroughCreateTexutresMainThread();
+                PXR_Plugin.PassThrough.UPxr_PassThroughCreateTexturesMainThread();
             }
         }
 
@@ -133,7 +125,7 @@ public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
             }
             else
             {
-                PXR_Plugin.PassThrough.UPxr_PassThroughDeleteTexutresMainThread();
+                PXR_Plugin.PassThrough.UPxr_PassThroughDeleteTexturesMainThread();
             }
         }
 
@@ -145,7 +137,7 @@ public class PXR_PassThroughSystem : Subsystem<PXR_PassThroughDescriptor>
             }
             else
             {
-                PXR_Plugin.PassThrough.UPxr_PassThroughUpdateTexutresMainThread();
+                PXR_Plugin.PassThrough.UPxr_PassThroughUpdateTexturesMainThread();
             }
         }
     }

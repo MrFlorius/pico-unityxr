@@ -1,8 +1,4 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
-
-************************************************************************************/
+﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +15,7 @@ namespace Unity.XR.PXR
         {
             Null,
             Invalid,
-            Valid,
+            Valid
         }
 
         [SerializeField]

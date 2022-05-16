@@ -1,24 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
-using Unity.XR.PXR;
 using UnityEngine;
 
 namespace Unity.XR.PXR
 {
     public enum AchievementType : int
     {
-        [Description("UNKNOWN")]
         Unknown,
-
-        [Description("SIMPLE")]
         Simple,
-
-        [Description("BITFIELD")]
         Bitfield,
-
-        [Description("COUNT")]
         Count,
-
     }
     public class PXR_AchievementAPI
     {
@@ -37,7 +27,7 @@ namespace Unity.XR.PXR
         private static string accessToken;
         private static string appId = PXR_PlatformSetting.Instance.appID;
 
-        internal static long Init()
+        public static long UPxr_AchievementInit()
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -55,7 +45,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        public static void RegisterNetwork()
+        public static void UPxr_RegisterNetwork()
         {
 #if UNITY_ANDROID
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -63,13 +53,13 @@ namespace Unity.XR.PXR
             achievementAPI.CallStatic("registerNetwork", currentActivity);
 #endif
         }
-        public static void UnRegisterNetwork()
+        public static void UPxr_UnRegisterNetwork()
         {
 #if UNITY_ANDROID
             achievementAPI.CallStatic("unregisterNetwork");
 #endif
         }
-        internal static AndroidJavaObject PopMessage()
+        public static AndroidJavaObject UPxr_PopMessage()
         {
 #if UNITY_ANDROID
             return achievementAPI.CallStatic<AndroidJavaObject>("pvr_PopMessage");
@@ -77,7 +67,7 @@ namespace Unity.XR.PXR
             return null;
 #endif
         }
-        internal static string pvr_Error_GetMessage(AndroidJavaObject popMessage)
+        public static string UPxr_ErrorGetMessage(AndroidJavaObject popMessage)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -85,7 +75,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static int pvr_Error_GetHttpCode(AndroidJavaObject popMessage)
+        public static int UPxr_ErrorGetHttpCode(AndroidJavaObject popMessage)
         {
             int returnValue = 0;
 #if UNITY_ANDROID
@@ -93,7 +83,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static int pvr_Error_GetCode(AndroidJavaObject popMessage)
+        public static int UPxr_ErrorGetCode(AndroidJavaObject popMessage)
         {
             int returnValue = 0;
 #if UNITY_ANDROID
@@ -102,7 +92,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static long pvr_Achievements_AddCount(string name, long count)
+        public static long UPxr_AchievementsAddCount(string name, long count)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -110,7 +100,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_AddFields(string name, string fields)
+        public static long UPxr_AchievementsAddFields(string name, string fields)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -118,7 +108,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_GetAllDefinitions()
+        public static long UPxr_AchievementsGetAllDefinitions()
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -128,7 +118,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_GetAllProgress()
+        public static long UPxr_AchievementsGetAllProgress()
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -136,7 +126,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_GetDefinitionsByName(string[] names, int v)
+        public static long UPxr_AchievementsGetDefinitionsByName(string[] names, int v)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -146,7 +136,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_GetProgressByName(string[] names, int v)
+        public static long UPxr_AchievementsGetProgressByName(string[] names, int v)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -154,7 +144,7 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_Achievements_Unlock(string name)
+        public static long UPxr_AchievementsUnlock(string name)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -162,18 +152,18 @@ namespace Unity.XR.PXR
 #endif
             return returnValue;
         }
-        internal static long pvr_HTTP_GetWithMessageType(string nextUrl, PXR_Message.MessageType messageType)
+        public static long UPxr_GetWithMessageType(string nextUrl, PXR_Message.MessageType messageType)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
             switch (messageType)
             {
-                case PXR_Message.MessageType.Achievements_GetNextAchievementDefinitionArrayPage:
+                case PXR_Message.MessageType.AchievementsGetNextAchievementDefinitionArrayPage:
                     AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                     AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
                     returnValue = achievementAPI.CallStatic<long>("pvr_Achievements_GetAllDefinitionsByUrl", nextUrl, currentActivity);
                     break;
-                case PXR_Message.MessageType.Achievements_GetNextAchievementProgressArrayPage:
+                case PXR_Message.MessageType.AchievementsGetNextAchievementProgressArrayPage:
                     returnValue = achievementAPI.CallStatic<long>("pvr_Achievements_GetAllProgressByUrl", nextUrl);
                     break;
                 default:
@@ -183,8 +173,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-
-        internal static long pvr_Message_GetType(AndroidJavaObject popMessage)
+        public static long UPxr_MessageGetType(AndroidJavaObject popMessage)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -193,12 +182,12 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static bool pvr_Message_IsError(AndroidJavaObject popMessage)
+        public static bool UPxr_MessageIsError(AndroidJavaObject popMessage)
         {
             return popMessage.Call<bool>("isMessage_IsError");
         }
 
-        internal static long pvr_Message_GetRequestID(AndroidJavaObject popMessage)
+        public static long UPxr_MessageGetRequestID(AndroidJavaObject popMessage)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -207,7 +196,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_Message_GetString(AndroidJavaObject popMessage)
+        public static string UPxr_MessageGetString(AndroidJavaObject popMessage)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -216,7 +205,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static bool pvr_AchievementUpdate_GetJustUnlocked(AndroidJavaObject popMessage)
+        public static bool UPxr_AchievementUpdateGetJustUnlocked(AndroidJavaObject popMessage)
         {
             bool returnValue = true;
 #if UNITY_ANDROID
@@ -225,7 +214,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementUpdate_GetName(AndroidJavaObject popMessage)
+        public static string UPxr_AchievementUpdateGetName(AndroidJavaObject popMessage)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -234,9 +223,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-
-
-        internal static int pvr_AchievementProgressArray_GetSize(AndroidJavaObject msg)
+        public static int UPxr_AchievementProgressArrayGetSize(AndroidJavaObject msg)
         {
             int returnValue = 0;
 #if UNITY_ANDROID
@@ -245,7 +232,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static AndroidJavaObject pvr_AchievementProgressArray_GetElement(AndroidJavaObject msg, int index)
+        public static AndroidJavaObject UPxr_AchievementProgressArrayGetElement(AndroidJavaObject msg, int index)
         {
 #if UNITY_ANDROID
             return progressArrayHandle.CallStatic<AndroidJavaObject>("pvr_AchievementProgressArray_GetElement", msg, index);
@@ -254,7 +241,7 @@ namespace Unity.XR.PXR
 #endif
         }
 
-        internal static string pvr_AchievementProgressArray_GetNextUrl(AndroidJavaObject msg)
+        public static string UPxr_AchievementProgressArrayGetNextUrl(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -263,7 +250,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementProgress_GetBitfield(AndroidJavaObject msg)
+        public static string UPxr_AchievementProgressGetBitfield(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -272,7 +259,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static long pvr_AchievementProgress_GetCount(AndroidJavaObject msg)
+        public static long UPxr_AchievementProgressGetCount(AndroidJavaObject msg)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -281,7 +268,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static bool pvr_AchievementProgress_GetIsUnlocked(AndroidJavaObject msg)
+        public static bool UPxr_AchievementProgressGetIsUnlocked(AndroidJavaObject msg)
         {
             bool returnValue = true;
 #if UNITY_ANDROID
@@ -290,7 +277,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementProgress_GetName(AndroidJavaObject msg)
+        public static string UPxr_AchievementProgressGetName(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -299,22 +286,21 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static DateTime pvr_AchievementProgress_GetUnlockTime(AndroidJavaObject msg)
+        public static DateTime UPxr_AchievementProgressGetUnlockTime(AndroidJavaObject msg)
         {
             DateTime returnValue = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 #if UNITY_ANDROID
-            returnValue = DateTimeFromNative(progressHandle.CallStatic<long>("pvr_AchievementProgress_GetUnlockTime", msg));
+            returnValue = UPxr_DateTimeFromNative(progressHandle.CallStatic<long>("pvr_AchievementProgress_GetUnlockTime", msg));
 #endif
             return returnValue;
         }
-        internal static DateTime DateTimeFromNative(long seconds_since_the_one_true_epoch)
+        public static DateTime UPxr_DateTimeFromNative(long dateTime)
         {
             var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return dt.AddSeconds(seconds_since_the_one_true_epoch).ToLocalTime();
+            return dt.AddSeconds(dateTime).ToLocalTime();
         }
 
-
-        internal static int pvr_AchievementDefinitionArray_GetSize(AndroidJavaObject msg)
+        public static int UPxr_AchievementDefinitionArrayGetSize(AndroidJavaObject msg)
         {
             int returnValue = 0;
 #if UNITY_ANDROID
@@ -323,7 +309,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static AndroidJavaObject pvr_AchievementDefinitionArray_GetElement(AndroidJavaObject msg, int index)
+        public static AndroidJavaObject UPxr_AchievementDefinitionArrayGetElement(AndroidJavaObject msg, int index)
         {
 #if UNITY_ANDROID
             return definitionArrayHandle.CallStatic<AndroidJavaObject>("pvr_AchievementDefinitionArray_GetElement", msg, index);
@@ -332,7 +318,7 @@ namespace Unity.XR.PXR
 #endif
         }
 
-        internal static string pvr_AchievementDefinitionArray_GetNextUrl(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionArrayGetNextUrl(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -341,7 +327,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static AchievementType pvr_AchievementDefinition_GetType(AndroidJavaObject msg)
+        public static AchievementType UPxr_AchievementDefinitionGetType(AndroidJavaObject msg)
         {
             AchievementType returnValue = AchievementType.Bitfield;
 #if UNITY_ANDROID
@@ -351,7 +337,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetName(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetName(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -360,7 +346,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static int pvr_AchievementDefinition_GetBitfieldLength(AndroidJavaObject msg)
+        public static int UPxr_AchievementDefinitionGetBitfieldLength(AndroidJavaObject msg)
         {
             int returnValue = 0;
 #if UNITY_ANDROID
@@ -369,7 +355,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static long pvr_AchievementDefinition_GetTarget(AndroidJavaObject msg)
+        public static long UPxr_AchievementDefinitionGetTarget(AndroidJavaObject msg)
         {
             long returnValue = 0;
 #if UNITY_ANDROID
@@ -378,7 +364,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetTitle(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetTitle(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -387,7 +373,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetUnlockedDescription(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetUnlockedDescription(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -396,7 +382,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetLockedIcon(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetLockedIcon(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -405,7 +391,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static bool pvr_AchievementDefinition_GetIsSecrect(AndroidJavaObject msg)
+        public static bool UPxr_AchievementDefinitionGetIsSecrect(AndroidJavaObject msg)
         {
             bool returnValue = false;
 #if UNITY_ANDROID
@@ -414,7 +400,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetUnlockedIcon(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetUnlockedIcon(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID
@@ -423,7 +409,7 @@ namespace Unity.XR.PXR
             return returnValue;
         }
 
-        internal static string pvr_AchievementDefinition_GetDescription(AndroidJavaObject msg)
+        public static string UPxr_AchievementDefinitionGetDescription(AndroidJavaObject msg)
         {
             string returnValue = "";
 #if UNITY_ANDROID

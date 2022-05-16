@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64e9912c3d53ea044b8ac398ccaa3770, type: 3}
+  m_Script: {fileID: 11500000, guid: 508edb944d24e574595a91425051a8e4, type: 3}
   m_Name: PlatformSetting
   m_EditorClassIdentifier: 
-  entitlementchecksimulation: 0
+  entitlementCheckSimulation: 0
   startTimeEntitlementCheck: 0
   appID: 
   deviceSN: []
