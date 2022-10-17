@@ -1,8 +1,14 @@
-﻿/************************************************************************************
- 【PXR SDK】
- Copyright 2015-2020 Pico Technology Co., Ltd. All Rights Reserved.
+﻿/*******************************************************************************
+Copyright © 2015-2022 PICO Technology Co., Ltd.All rights reserved.  
 
-************************************************************************************/
+NOTICE：All information contained herein is, and remains the property of 
+PICO Technology Co., Ltd. The intellectual and technical concepts 
+contained hererin are proprietary to PICO Technology Co., Ltd. and may be 
+covered by patents, patents in process, and are protected by trade secret or 
+copyright law. Dissemination of this information or reproduction of this 
+material is strictly forbidden unless prior written permission is obtained from
+PICO Technology Co., Ltd. 
+*******************************************************************************/
 
 using System.Collections;
 using System.Collections.Generic;
@@ -88,6 +94,8 @@ namespace Unity.XR.PXR
 
         private int num = 0;
         private bool init = false;
+
+        private bool motionShotEnable = false;
         private struct LayerTexture
         {
             public Texture[] swapChain;
@@ -108,6 +116,11 @@ namespace Unity.XR.PXR
             DontDestroyOnLoad(gameObject);
         }
 
+        public void Start()
+        {
+            GetMotionShotEnable();
+        }
+
         public void Pxr_MRCPoseInitialize() {
             if (layerTexturesInfo == null)
             {
@@ -118,7 +131,7 @@ namespace Unity.XR.PXR
             xmlCameraData = new CameraData();
             UPxr_ReadXML(out xmlCameraData);
             Invoke("Pxr_GetHeight", 0.5f);
-
+            PXR_Plugin.System.UPxr_SetIsSupportMovingMrc(true);
             PxrPosef pose = new PxrPosef();
             pose.orientation.x = xmlCameraData.rotation[0];
             pose.orientation.y = xmlCameraData.rotation[1];
@@ -151,6 +164,7 @@ namespace Unity.XR.PXR
             {
                 Camera.onPostRender += UPxr_CopyMRCTexture;
             }
+            PXR_Plugin.System.RecenterSuccess += UPxr_Calibration;
             Debug.Log("PXR_MRCInit Succeed");
         }
 
@@ -174,6 +188,7 @@ namespace Unity.XR.PXR
             {
                 PXR_Plugin.Render.UPxr_DestroyLayer(9999);
             }
+            PXR_Plugin.System.RecenterSuccess -= UPxr_Calibration;
         }
 
         void OnApplicationPause(bool pause) {
@@ -322,6 +337,7 @@ namespace Unity.XR.PXR
                 foregroundCameraObj.GetComponent<Camera>().targetTexture = foregroundMrcRenderTexture;
                 foregroundCameraObj.SetActive(true);
             }
+            mrcPlay = true;
         }
 
         public void UPxr_CreateMRCOverlay(uint width,uint height) {
@@ -337,10 +353,7 @@ namespace Unity.XR.PXR
             layerParam.arraySize = 1;
             layerParam.mipmapCount = 1;
             layerParam.layerFlags = 0;
-            //IntPtr layerParamPtr = Marshal.AllocHGlobal(Marshal.SizeOf(layerParam));
-            //Marshal.StructureToPtr(layerParam, layerParamPtr, false);
             PXR_Plugin.Render.UPxr_CreateLayerParam(layerParam);
-            //Marshal.FreeHGlobal(layerParamPtr);
         }
 
         public void UPxr_GetLayerImage() {
@@ -409,8 +422,8 @@ namespace Unity.XR.PXR
         }
 
         public void UPxr_CopyMRCTexture(Camera cam) {
-            if (cam.tag != Camera.main.tag || cam.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right) return;
-            if (createMRCOverlaySucceed)
+            if (cam == null || cam.tag != Camera.main.tag || cam.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right) return;
+            if (createMRCOverlaySucceed && PXR_Plugin.System.UPxr_GetMRCEnable())
             {
                 PXR_Plugin.Render.UPxr_GetLayerNextImageIndex(9999, ref imageIndex);
 
@@ -420,8 +433,6 @@ namespace Unity.XR.PXR
 
                     if (dstT == null)
                         continue;
-
-                    bool isLinear = (QualitySettings.activeColorSpace == ColorSpace.Linear);
                     RenderTexture rt;
                     if (eyeId == 0)
                     {
@@ -431,27 +442,21 @@ namespace Unity.XR.PXR
                     {
                         rt = foregroundMrcRenderTexture as RenderTexture;
                     }
-                    bool bypassBlit = !isLinear && rt != null && rt.format == RenderTextureFormat.ARGB32;
-                    RenderTexture tempDstRT = null;
+                    RenderTexture tempRT = null;
 
-                    if (!bypassBlit)
+                    if (!(QualitySettings.activeColorSpace == ColorSpace.Gamma && rt != null && rt.format == RenderTextureFormat.ARGB32))
                     {
-                        int width = (int)layerParam.width >> 0;
-                        if (width < 1) width = 1;
-                        int height = (int)layerParam.height >> 0;
-                        if (height < 1) height = 1;
-
-                        RenderTextureDescriptor descriptor = new RenderTextureDescriptor(width, height, RenderTextureFormat.ARGB32, 0);
+                        RenderTextureDescriptor descriptor = new RenderTextureDescriptor((int)layerParam.width, (int)layerParam.height, RenderTextureFormat.ARGB32, 0);
                         descriptor.msaaSamples = (int)layerParam.sampleCount;
                         descriptor.useMipMap = true;
                         descriptor.autoGenerateMips = false;
                         descriptor.sRGB = false;
 
-                        tempDstRT = RenderTexture.GetTemporary(descriptor);
+                        tempRT = RenderTexture.GetTemporary(descriptor);
 
-                        if (!tempDstRT.IsCreated())
+                        if (!tempRT.IsCreated())
                         {
-                            tempDstRT.Create();
+                            tempRT.Create();
                         }
                         if (eyeId == 0)
                         {
@@ -461,11 +466,21 @@ namespace Unity.XR.PXR
                         {
                             foregroundMrcRenderTexture.DiscardContents();
                         }
-                        tempDstRT.DiscardContents();
-                    }
+                        tempRT.DiscardContents();
 
-                    if (bypassBlit)
-                    {
+
+                        if (eyeId == 0)
+                        {
+                            Graphics.Blit(mrcRenderTexture, tempRT);
+                            Graphics.CopyTexture(tempRT, 0, 0, dstT, 0, 0);
+                        }
+                        else
+                        {
+                            Graphics.Blit(foregroundMrcRenderTexture, tempRT);
+                            Graphics.CopyTexture(tempRT, 0, 0, dstT, 0, 0);
+                        }
+                    }
+                    else {
                         if (eyeId == 0)
                         {
                             Graphics.CopyTexture(mrcRenderTexture, 0, 0, dstT, 0, 0);
@@ -475,23 +490,10 @@ namespace Unity.XR.PXR
                             Graphics.CopyTexture(foregroundMrcRenderTexture, 0, 0, dstT, 0, 0);
                         }
                     }
-                    else
-                    {
-                        if (eyeId == 0)
-                        {
-                            Graphics.Blit(mrcRenderTexture, tempDstRT);
-                            Graphics.CopyTexture(tempDstRT, 0, 0, dstT, 0, 0);
-                        }
-                        else
-                        {
-                            Graphics.Blit(foregroundMrcRenderTexture, tempDstRT);
-                            Graphics.CopyTexture(tempDstRT, 0, 0, dstT, 0, 0);
-                        }
-                    }
 
-                    if (tempDstRT != null)
+                    if (tempRT != null)
                     {
-                        RenderTexture.ReleaseTemporary(tempDstRT);
+                        RenderTexture.ReleaseTemporary(tempRT);
                     }
                 }
 
@@ -505,6 +507,7 @@ namespace Unity.XR.PXR
                 layerSubmit.header.colorScaleY = 1.0f;
                 layerSubmit.header.colorScaleZ = 1.0f;
                 layerSubmit.header.colorScaleW = 1.0f;
+                layerSubmit.pose.orientation.w = 1.0f;
                 layerSubmit.header.headPose.orientation.x = 0;
                 layerSubmit.header.headPose.orientation.y = 0;
                 layerSubmit.header.headPose.orientation.z = 0;
@@ -527,47 +530,35 @@ namespace Unity.XR.PXR
             }
             if (PXR_Plugin.System.UPxr_GetMRCEnable() && num >= 3)
             {
-                if (!mrcPlay)
+                if (backCameraObj == null)
                 {
-                    mrcPlay = true;
-                    UPxr_CreateCamera(xmlCameraData);
-                    //mrcRtNumber = (UInt64)mrcRenderTexture.GetNativeTexturePtr().ToInt64();
-                    //PXR_Plugin.System.UPxr_SetMRCTextureID(mrcRtNumber);
-                    //if(onlyBack == false)
-                    //{
-                    //    mrcRtNumberForeground = (UInt64)foregroundMrcRenderTexture.GetNativeTexturePtr().ToInt64();
-                    //    PXR_Plugin.System.UPxr_SetMRCTextureID2(mrcRtNumberForeground);
-                    //}
-                    //else {
-                    //    PXR_Plugin.System.UPxr_SetMRCTextureID2(0);
-                    //}
+                    if (Camera.main.transform != null)
+                    {
+                        UPxr_CreateCamera(xmlCameraData);
+                        UPxr_Calibration();
+                    }
                 }
-                else if (backCameraObj == null)
+                else
                 {
-                    mrcPlay = true;
-                    UPxr_CreateCamera(xmlCameraData);
+                    if (!mrcPlay)
+                    {
+                        if (Camera.main.transform != null)
+                        {
+                            UPxr_CreateCamera(xmlCameraData);
+                            UPxr_Calibration();
+                        }
+                    }
+                }
+                if (foregroundCameraObj != null)
+                {
+                    Vector3 cameraLookAt = Camera.main.transform.position - foregroundCameraObj.transform.position;
+                    float distance = Vector3.Dot(cameraLookAt, foregroundCameraObj.transform.forward);
+                    foregroundCameraObj.GetComponent<Camera>().farClipPlane = Mathf.Max(foregroundCameraObj.GetComponent<Camera>().nearClipPlane + 0.001f, distance);
+                }
+                if (backCameraObj != null && foregroundCameraObj != null && motionShotEnable)
+                {
                     UPxr_Calibration();
-                    //mrcRtNumber = (UInt64)mrcRenderTexture.GetNativeTexturePtr().ToInt64();
-                    //PXR_Plugin.System.UPxr_SetMRCTextureID(mrcRtNumber);
-                    //if (onlyBack == false)
-                    //{
-                    //    mrcRtNumberForeground = (UInt64)foregroundMrcRenderTexture.GetNativeTexturePtr().ToInt64();
-                    //    PXR_Plugin.System.UPxr_SetMRCTextureID2(mrcRtNumberForeground);
-                    //}
-                    //else
-                    //{
-                    //    PXR_Plugin.System.UPxr_SetMRCTextureID2(0);
-                    //}
-                }
-                if (PXR_Plugin.System.UPxr_GetHomeKey())
-                {
-                    replacement = true;
-                }
-
-
-                Vector3 headToExternalCameraVec = Camera.main.transform.position - foregroundCameraObj.transform.position;
-                float clipDistance = Vector3.Dot(headToExternalCameraVec, foregroundCameraObj.transform.forward);
-                foregroundCameraObj.GetComponent<Camera>().farClipPlane = Mathf.Max(foregroundCameraObj.GetComponent<Camera>().nearClipPlane + 0.001f, clipDistance);
+                } 
                 UPxr_GetLayerImage();
             }
             else
@@ -582,15 +573,6 @@ namespace Unity.XR.PXR
 
         }
 
-        public void LateUpdate()
-        {
-            if (replacement && PXR_Plugin.System.UPxr_GetMRCEnable())
-            {
-                UPxr_Calibration();
-                PXR_Plugin.System.UPxr_InitHomeKey();
-                replacement = false;
-            }
-        }
 
         public float UPxr_GetYFOV()
         {
@@ -598,20 +580,23 @@ namespace Unity.XR.PXR
         }
 
         public void UPxr_Calibration() {
-            PxrPosef pose = new PxrPosef();
-            pose.orientation.x = 0;
-            pose.orientation.y = 0;
-            pose.orientation.z = 0;
-            pose.orientation.w = 0;
-            pose.position.x = 0;
-            pose.position.y = 0;
-            pose.position.z = 0;
-            PXR_Plugin.System.UPxr_GetMrcPose(ref pose);
-            backCameraObj.transform.localPosition = new Vector3(pose.position.x + locationDeflection.x, pose.position.y + locationDeflection.y + height, (-pose.position.z) * 1f);
-            foregroundCameraObj.transform.localPosition = new Vector3(pose.position.x + locationDeflection.x, pose.position.y + locationDeflection.y + height, (-pose.position.z) * 1f);
-            Vector3 rototion = new Quaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w).eulerAngles;
-            backCameraObj.transform.localEulerAngles = new Vector3(-rototion.x + angularDeflection.x, -rototion.y + angularDeflection.y, -rototion.z + angularDeflection.z);
-            foregroundCameraObj.transform.localEulerAngles = new Vector3(-rototion.x + angularDeflection.x, -rototion.y + angularDeflection.y, -rototion.z + angularDeflection.z);
+            if (PXR_Plugin.System.UPxr_GetMRCEnable())
+            {
+                PxrPosef pose = new PxrPosef();
+                pose.orientation.x = 0;
+                pose.orientation.y = 0;
+                pose.orientation.z = 0;
+                pose.orientation.w = 0;
+                pose.position.x = 0;
+                pose.position.y = 0;
+                pose.position.z = 0;
+                PXR_Plugin.System.UPxr_GetMrcPose(ref pose);
+                backCameraObj.transform.localPosition = new Vector3(pose.position.x + locationDeflection.x, pose.position.y + locationDeflection.y + height, (-pose.position.z) * 1f);
+                foregroundCameraObj.transform.localPosition = new Vector3(pose.position.x + locationDeflection.x, pose.position.y + locationDeflection.y + height, (-pose.position.z) * 1f);
+                Vector3 rototion = new Quaternion(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w).eulerAngles;
+                backCameraObj.transform.localEulerAngles = new Vector3(-rototion.x + angularDeflection.x, -rototion.y + angularDeflection.y, -rototion.z + angularDeflection.z);
+                foregroundCameraObj.transform.localEulerAngles = new Vector3(-rototion.x + angularDeflection.x, -rototion.y + angularDeflection.y, -rototion.z + angularDeflection.z);
+            }
         }
 
         public Vector3 UPxr_ToVector3(float[] translation)
@@ -626,6 +611,12 @@ namespace Unity.XR.PXR
             Vector3 vector3 = quaternion.eulerAngles;
             Debug.Log("rotation:" + vector3.ToString());
             return new Vector3(-vector3.x + angularDeflection.x, -vector3.y + angularDeflection.y, -vector3.z + angularDeflection.z);
+        }
+
+        public void GetMotionShotEnable() {
+            if (PXR_Plugin.System.UPxr_GetAPIVersion() >= 0x2000306) {
+                motionShotEnable = true;
+            }
         }
     }
 }

@@ -1,4 +1,14 @@
-﻿// Copyright © 2015-2021 Pico Technology Co., Ltd. All Rights Reserved.
+﻿/*******************************************************************************
+Copyright © 2015-2022 PICO Technology Co., Ltd.All rights reserved.  
+
+NOTICE：All information contained herein is, and remains the property of 
+PICO Technology Co., Ltd. The intellectual and technical concepts 
+contained hererin are proprietary to PICO Technology Co., Ltd. and may be 
+covered by patents, patents in process, and are protected by trade secret or 
+copyright law. Dissemination of this information or reproduction of this 
+material is strictly forbidden unless prior written permission is obtained from
+PICO Technology Co., Ltd. 
+*******************************************************************************/
 
 using System.Collections;
 using System.IO;
@@ -19,6 +29,8 @@ namespace Unity.XR.PXR
         public GameObject neo2R;
         public GameObject neo3L;
         public GameObject neo3R;
+        public GameObject PICO_4L;
+        public GameObject PICO_4R;
 
         public Material mobileMaterial;
         public Material standardMaterial;
@@ -37,6 +49,7 @@ namespace Unity.XR.PXR
         private const string g2TexBasePath = "Controller/G2/controller3";
         private const string neo2TexBasePath = "Controller/Neo2/controller4";
         private const string neo3TexBasePath = "Controller/Neo3/controller5";
+        private const string pico_4TexBasePath = "Controller/PICO_4/controller6";
 
         private bool leftControllerState = false;
         private bool rightControllerState = false;
@@ -47,6 +60,7 @@ namespace Unity.XR.PXR
             G2,
             Neo2,
             Neo3,
+            PICO_4
         }
 #if UNITY_EDITOR
         [SerializeField]
@@ -86,15 +100,20 @@ namespace Unity.XR.PXR
                         LoadTexture(neo3Comp, neo3TexBasePath, true);
                         break; ;
                     }
+                case ControllerSimulationType.PICO_4:
+                {
+                    var neo3Object = Instantiate(hand == PXR_Input.Controller.LeftController ? PICO_4L : PICO_4R, transform, false);
+                    break; ;
+                }
             }
 #endif
         }
 
         void Start()
         {
-            controllerType = PXR_Plugin.Controller.UPxr_GetControllerType();
             if (!customModel)
             {
+                controllerType = PXR_Plugin.Controller.UPxr_GetControllerType();
 #if UNITY_ANDROID && !UNITY_EDITOR
                 LoadResFromJson();
 #endif
@@ -263,6 +282,10 @@ namespace Unity.XR.PXR
                     var neo3Comp = neo3Go.AddComponent<PXR_ControllerKeyEffects>();
                     neo3Comp.hand = hand;
                     LoadTexture(neo3Comp, neo3TexBasePath, true);
+                    loadModelSuccess = true;
+                    break;
+                case 6:
+                    var pico4Go = Instantiate(hand == PXR_Input.Controller.LeftController ? PICO_4L : PICO_4R, transform, false);
                     loadModelSuccess = true;
                     break;
                 default:
